@@ -135,6 +135,6 @@ files:
 
 * Update the runtime config
 
-`  bosh update-runtime-config --name=crowdstrike runtime-config/qualys.yml`
+`  bosh update-runtime-config --name=qualys runtime-config/qualys.yml`
 
 * Trigger Apply Changes from Ops Manager
