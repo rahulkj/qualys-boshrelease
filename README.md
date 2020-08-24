@@ -60,6 +60,24 @@ Qualys Cloud Agent Bosh Release
 
   `mv packages/qualys-cloud-agent/*.deb src`
 
+* Copy all the `.deb` files into the blobs
+
+  ```
+  for f in $(ls src/); do bosh add-blob src/$f $f; done
+  ```
+
+* Update the `final.yml` file under `config` to include the `blobstore_path` variable:
+
+  ```
+  blobstore:
+    provider: local
+    options:
+      blobstore_path: /Users/bob/blobs
+  name: qualys-cloud-agent
+  ```
+
+  where the `blobstore_path` is the current working directory: `pwd`
+
 * Remove the `release.MF` file
 
   `rm -f release.MF`
@@ -131,7 +149,7 @@ files:
 
   `bosh upload-release qualys-cloud-agent-linux.tgz`
 
-* Update the file under `runtime-config` > `qualys.yml` file and update the version number, from the output of the previous command
+* Update the file under [runtime-config](./runtime-config/qualys.yml) file and update the version number, from the output of the previous command
 
   `version: 1`
 
