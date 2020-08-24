@@ -1,0 +1,23 @@
+---  
+addons:
+- jobs:
+  - include:
+      stemcell:
+      - os: ubuntu-xenial
+      - os: ubuntu-trusty
+    name: qualys-cloud-agent-linux
+    properties:
+      qualys:
+        activationId: '1'
+        customerId: '2'
+        downloadUrl: 
+        podId: us_pod2
+        proxyPass: 
+        proxyServer: 
+        proxyUser: 
+        useProxyPcpDownload: false
+    release: qualys-cloud-agent
+  name: qualys-addon
+releases:
+- name: qualys-cloud-agent
+  version: 1
