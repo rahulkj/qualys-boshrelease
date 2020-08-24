@@ -18,11 +18,13 @@ Qualys Cloud Agent Bosh Release
   tar -xvf qualys-cloud-agent-1.0.1.tgz -C qualys-cloud-agent
   
   rm -f qualys-cloud-agent-1.0.1.tgz
+
+  cd qualys-cloud-agent
   ```
 
 * Switch into the jobs folder and untar the file under it:
   ```
-  cd qualys-cloud-agent/jobs
+  cd jobs
   
   mkdir qualys-cloud-agent-linux
   
@@ -39,7 +41,7 @@ Qualys Cloud Agent Bosh Release
 
 * Switch into the packages folder and untar the file under it:
   ```
-  cd qualys-cloud-agent/packages
+  cd packages
   
   mkdir qualys-cloud-agent
   
