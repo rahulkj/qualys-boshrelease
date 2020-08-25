@@ -1,6 +1,10 @@
 Qualys Cloud Agent Bosh Release
 ---
 
+#### Table of contents
+- [Deploying Qualys Cloud Agent as a bosh release](##deploying-qualys-cloud-agent-as-a-bosh-release)
+- [Installing Qualys to Ops Director using Ops Manager](#installing-qualys-to-ops-director-using-ops-manager)
+
 ## Deploying Qualys Cloud Agent as a bosh release
 
 * Download the tile from [PivNet](https://network.pivotal.io/products/qualys-cloud-agent-tile/)
