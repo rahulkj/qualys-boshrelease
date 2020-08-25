@@ -1,0 +1,22 @@
+{
+  "add_job_to_instance_group": {
+    "instance_group": "bosh",
+    "job_name": "qualys-cloud-agent-linux",
+    "release_name": "qualys-cloud-agent",
+    "release_url": "http://ubuntu.homelab.io:9090/vmware/addons/qualys-cloud-agent-linux.tgz",
+    "release_sha1": "0fdf91e4e8eea12f8dbbebf1872161d71bb3cbe1",
+    "job_properties": {
+      "qualys": {
+        "activationId": "1",
+        "customerId": "2",
+        "downloadUrl": "",
+        "podId": "us_pod2",
+        "proxyPass": "",
+        "proxyServer": "",
+        "proxyUser": "",
+        "useProxyPcpDownload": "false",
+        "version": 5
+      }
+    }
+  }
+}

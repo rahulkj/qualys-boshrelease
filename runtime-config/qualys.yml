@@ -20,4 +20,4 @@ addons:
   name: qualys-addon
 releases:
 - name: qualys-cloud-agent
-  version: 1
+  version: 2

@@ -1,6 +1,8 @@
 Qualys Cloud Agent Bosh Release
 ---
 
+## Deploying Qualys Cloud Agent as a bosh release
+
 * Download the tile from [PivNet](https://network.pivotal.io/products/qualys-cloud-agent-tile/)
 * Rename the `qualys-cloud-agent-tile-x.x.x.pivotal` file to `qualys-cloud-agent-tile-x.x.x.zip`
 * Unzip the tile into a folder: 
@@ -158,3 +160,124 @@ files:
 `  bosh update-runtime-config --name=qualys runtime-config/qualys.yml`
 
 * Trigger Apply Changes from Ops Manager
+
+## Installing Qualys to Ops Director using Ops Manager
+
+* Modify the `spec` file under `jobs/qualys-cloud-agent-linux/spec` and add the following property to it
+  ```
+    qualys.version:
+      description: 'Specify the qualys bosh release version'
+  ```
+
+* Next modify the file pre-start.erb under `jobs/qualys-cloud-agent-linux/templates/pre-start.erb` and replace the line `local userAgent="bosh/<%= "spec.release.version" %>"` with `local userAgent="bosh/<%= p("qualys.version") %>"`
+
+* Create a new bosh-release version
+
+  `bosh create-release --final --force --tarball=qualys-cloud-agent-linux.tgz`
+
+* Create the [director.json](./runtime-config/director.json) and update the following:
+  - `release_url`
+  - `release_sha1`
+  - `activationId`
+  - `customerId`
+  - `downloadUrl`
+  - `podId`
+  - `proxyPass`
+  - `proxyServer`
+  - `proxyUser`
+  - `useProxyPcpDownload`
+  - `version`
+
+* Next add the job that needs to be added to bosh deployment by running the following command using `om` cli
+
+  ```
+  om -t $OM_TARGET curl -p /api/v0/staged/director/manifest_operations/add_job_to_instance_group -x POST -d '{
+  "add_job_to_instance_group": {
+    "instance_group": "bosh",
+    "job_name": "qualys-cloud-agent-linux",
+    "release_name": "qualys-cloud-agent",
+    "release_url": "http://ubuntu.homelab.io:9090/vmware/addons/qualys-cloud-agent-linux.tgz",
+    "release_sha1": "0fdf91e4e8eea12f8dbbebf1872161d71bb3cbe1",
+    "job_properties": {
+      "qualys": {
+        "activationId": "1",
+        "customerId": "2",
+        "downloadUrl": "",
+        "podId": "us_pod2",
+        "proxyPass": "",
+        "proxyServer": "",
+        "proxyUser": "",
+        "useProxyPcpDownload": "false",
+        "version": 5
+        }
+      }
+    }
+  }'
+  ```
+
+  Please post the json that you have crafted to be applied here.
+
+* Upon applying the above json, you should see the output similar to the one below
+
+  ```
+  Status: 201 Created
+  Cache-Control: no-cache, no-store
+  Connection: keep-alive
+  Content-Type: application/json; charset=utf-8
+  Date: Tue, 25 Aug 2020 22:17:20 GMT
+  Etag: W/"10a6adcbc373538876e0d28b84c83858"
+  Expires: Fri, 01 Jan 1990 00:00:00 GMT
+  Pragma: no-cache
+  Referrer-Policy: strict-origin-when-cross-origin
+  Server: Ops Manager
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  X-Download-Options: noopen
+  X-Frame-Options: SAMEORIGIN
+  X-Permitted-Cross-Domain-Policies: none
+  X-Request-Id: 38e546a9-555f-4350-a8cc-ada643b22f81
+  X-Runtime: 0.229496
+  X-Xss-Protection: 1; mode=block
+  {
+    "add_job_to_instance_group": {
+      "instance_group": "bosh",
+      "job_name": "qualys-cloud-agent-linux",
+      "release_name": "qualys-cloud-agent",
+      "release_url": "http://ubuntu.homelab.io:9090/vmware/addons/qualys-cloud-agent-linux.tgz",
+      "release_sha1": "0fdf91e4e8eea12f8dbbebf1872161d71bb3cbe1",
+      "job_properties": {
+        "qualys": {
+          "activationId": "1",
+          "customerId": "2",
+          "downloadUrl": "",
+          "podId": "us_pod2",
+          "proxyPass": "",
+          "proxyServer": "",
+          "proxyUser": "",
+          "useProxyPcpDownload": "false",
+          "version": 5
+        }
+      },
+      "guid": "op-5b13bf803c24",
+      "product_guid": "p-bosh-3d097bc3a29680328b4a"
+    }
+  }
+  ```
+
+* If you need to update/delete the above job, you will need to get the `guid` from the above output and run the delete operation
+
+  ```
+  om -t $OM_TARGET curl -p /api/v0/staged/director/manifest_operations/add_job_to_instance_group/op-5b13bf803c24 -x DELETE
+  ```
+
+* Now upload the release to a link, from where Ops Manager can download the release and make it available while updating bosh director
+
+* Finally apply changes
+  `om -t $OM_TARGET apply-changes --skip-deploy-products`
+
+* During the build of ops director, you will see a line like the following in the output
+  ```  
+  ...
+  Compiling package 'qualys-cloud-agent/7313b295c10fcffc38d5056326c4d7595981702af281d4c12df4cd5f2a7a798f'... Finished (00:00:03)
+  ...
+  ```
